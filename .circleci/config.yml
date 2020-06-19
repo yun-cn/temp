@@ -15,6 +15,7 @@ jobs:
       - restore_cache:
           keys:
             - v1-pkg-cache-{{ checksum "go.sum" }}
+            - v1-pkg-cache-
 
       - save_cache:
           key: v1-pkg-cache-{{ checksum "go.sum" }}
