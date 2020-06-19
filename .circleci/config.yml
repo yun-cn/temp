@@ -1,5 +1,30 @@
 version: 2
 jobs:
-  build-go1.10:
+  build:
     docker:
-      - image: circleci/golang:1.13
+      - image: circleci/golang:1.13.4
+
+    environment:
+      TEST_RESULTS: /tmp/test-results
+      #GOCACHE: /home/circleci/.cache/go-build #This path is used as default on circleci
+
+    steps:
+      - checkout
+      - run: mkdir -p $TEST_RESULTS
+
+      - restore_cache:
+          keys:
+            - v1-pkg-cache-{{ checksum "go.sum" }}
+            - v1-pkg-cache-
+
+      - save_cache:
+          key: v1-pkg-cache-{{ checksum "go.sum" }}
+          paths:
+            - "/go/pkg"
+
+      - store_artifacts:
+          path: /tmp/test-results
+          destination: raw-test-output
+
+      - store_test_results:
+          path: /tmp/test-results
